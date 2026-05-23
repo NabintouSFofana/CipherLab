@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#F2ECE0" />
+  <meta name="description" content="Caesar Cipher — a live web demo of the classic shift cipher. Built in Java, ported to JavaScript for the browser." />
+  <title>Caesar Cipher · lab notebook</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23F2ECE0'/><circle cx='16' cy='16' r='10' stroke='%2314110D' stroke-width='1.6' fill='none'/><path d='M16 8 v3 M22 14 l-3 1 M19 21 l-1 -3 M11 22 l3 -2 M9 15 l3 1' stroke='%23B6411C' stroke-width='1.6' stroke-linecap='round'/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Caesar Cipher — home">
+      <span class="brand-mark" aria-hidden="true">N°</span>
+      <span class="brand-name">Caesar Cipher</span>
+    </a>
+    <a class="repo-link mono" href="https://github.com/NabintouSFofana/caesarcipher_project" target="_blank" rel="noopener">
+      Source on GitHub&nbsp;↗
+    </a>
+  </header>
+
+  <main class="page" id="top">
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+
+      <div class="hero-copy">
+
+<span class="eyebrow mono">
+
+LAB NOTEBOOK · NO. 01 · 2025
+
+</span>
+
+        <h1 class="hero-title">
+
+<span class="line">
+
+<em>"Et tu,</em>
+
+</span>
+
+          <span class="line">
+
+Brute?"
+
+</span>
+
+        </h1>
+
+      </div>
+
+      <div class="hero-blurb">
+
+        <p>
+
+          The Caesar Cipher is a 2,000-year-old shift cipher —
+          every letter rotates forward by <em>n</em> positions in the alphabet.
+
+          Below is a live JavaScript port of the same algorithm I wrote in Java.
+
+          Type below, rotate the wheel, watch the letters travel.
+
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- ─── PLAYGROUND ─── -->
+    <section class="playground" aria-label="Cipher playground">
+
+      <div class="playground-grid">
+        <!-- Left: Input/output -->
+        <div class="io-stack">
+          <div class="field">
+            <label class="mono" for="plainInput">
+              <span class="label-num">01</span> Plaintext
+            </label>
+            <textarea id="plainInput" rows="4" spellcheck="false" placeholder="Type or paste here…">Et tu, Brute?</textarea>
+          </div>
+
+          <div class="shift-row">
+            <label class="mono" for="shiftInput">
+              <span class="label-num">02</span> Shift
+              <span id="shiftDisplay" class="shift-display mono">3</span>
+            </label>
+            <input type="range" id="shiftInput" min="-25" max="25" step="1" value="3" />
+            <div class="shift-buttons">
+              <button type="button" class="chip" data-shift="3">3</button>
+              <button type="button" class="chip" data-shift="13">13 (ROT13)</button>
+              <button type="button" class="chip" data-shift="25">25</button>
+              <button type="button" class="chip" data-shift="0">Reset</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="mono" for="cipherOutput">
+              <span class="label-num">03</span> Ciphertext
+            </label>
+            <textarea id="cipherOutput" rows="4" readonly></textarea>
+            <button type="button" id="copyBtn" class="link-btn copy-btn">Copy ciphertext&nbsp;↗</button>
+          </div>
+
+          <div class="swap-row">
+            <button type="button" id="swapBtn" class="btn">
+              <span aria-hidden="true">↕</span> Swap plain &amp; cipher (decrypt)
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Visualization wheel -->
+        <div class="viz-stack">
+          <div class="viz-label mono">The wheel</div>
+          <div class="wheel-container">
+            <svg id="wheelSvg" viewBox="-110 -110 220 220" xmlns="http://www.w3.org/2000/svg" aria-label="Alphabet wheel showing shift">
+              <!-- outer ring (plaintext) -->
+              <circle cx="0" cy="0" r="95" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+              <!-- inner ring (ciphertext) - rotates -->
+              <g id="innerRing">
+                <circle cx="0" cy="0" r="65" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+              </g>
+              <!-- marker -->
+              <line x1="0" y1="-105" x2="0" y2="-55" stroke="currentColor" stroke-width="1" opacity="0.35" stroke-dasharray="2 3"/>
+            </svg>
+          </div>
+          <p class="viz-caption">
+            Outer ring: plaintext alphabet.
+            Inner ring: where each letter <em>arrives</em> after the shift.
+            The marker shows the alignment between them.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="breaker">
+
+      <div class="section-rule">
+
+<span class="section-rule-label mono">
+
+§ Break the cipher
+
+</span>
+
+      </div>
+
+      <button
+              id="breakBtn"
+              class="btn">
+
+        Generate all 26 shifts
+
+      </button>
+
+      <div
+              id="breakResults">
+
+      </div>
+
+    </section>
+
+    <!-- ─── ALGORITHM ─── -->
+    <section class="algorithm">
+      <div class="section-rule">
+        <span class="section-rule-label mono">§ The algorithm</span>
+      </div>
+
+      <div class="algo-grid">
+        <div class="algo-prose">
+          <p>Each letter is treated as a position on a 26-character ring. To encrypt, we move each letter forward by <code>shift</code> positions, wrapping back to <code>A</code> after <code>Z</code>. Non-letters pass through untouched. Decryption is the same operation with the opposite shift — so we don't write two algorithms, just one.</p>
+          <p>The Java implementation uses <code>StringBuilder</code> for efficiency, normalizes the shift to <code>[0, 25]</code> with a modulo trick that handles negatives, and preserves case. The JavaScript on this page does the same thing, in roughly the same shape.</p>
+        </div>
+
+        <pre class="code-block" aria-label="Java implementation"><code><span class="c">// CaesarsCipher.java — the core method</span>
+<span class="k">public</span> <span class="t">String</span> encrypt(<span class="t">String</span> text, <span class="t">int</span> shift) {
+    <span class="t">int</span> n = ((shift % <span class="n">26</span>) + <span class="n">26</span>) % <span class="n">26</span>;
+    <span class="t">StringBuilder</span> out = <span class="k">new</span> <span class="t">StringBuilder</span>(text.length());
+
+    <span class="k">for</span> (<span class="t">char</span> c : text.toCharArray()) {
+        <span class="k">if</span> (<span class="t">Character</span>.isLetter(c)) {
+            <span class="t">char</span> base = <span class="t">Character</span>.isUpperCase(c) ? <span class="s">'A'</span> : <span class="s">'a'</span>;
+            out.append((<span class="t">char</span>) (base + (c - base + n) % <span class="n">26</span>));
+        } <span class="k">else</span> {
+            out.append(c);
+        }
+    }
+    <span class="k">return</span> out.toString();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ─── HONEST NOTE ─── -->
+    <section class="note">
+      <div class="section-rule">
+        <span class="section-rule-label mono">§ Honest note</span>
+      </div>
+      <p class="note-prose">
+        Caesar is, of course, trivially breakable. Brute-force all 26 shifts and you'll spot the readable one in a second; frequency-analyse the output and you'll spot it even faster. This implementation is for <em>learning</em> — about modular arithmetic, character codes, and writing a clean, well-documented Java class — not for protecting anything that matters. For real secrecy, use AES, ChaCha20, or anything else maintained by people who think about side channels for a living.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span class="mono">© 2026 — Caesar Cipher · by <a href="https://github.com/NabintouSFofana" target="_blank" rel="noopener">Nabintou Fofana</a></span>
+    <a href="#top" class="mono">Back to top ↑</a>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden>
+    <span id="toastText"></span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
